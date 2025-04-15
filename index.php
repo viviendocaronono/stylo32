@@ -57,6 +57,9 @@ if (!isset($_SESSION['user_id'])) {
     <button type="submit" name="logout">Cerrar Sesión</button>
 </form>
 
+<br>
+
+<a href="admin_panel.php">Admin</a>
 
 </html>
         

@@ -3,7 +3,7 @@ session_start();
 include('php/db.php'); 
 
 if (isset($_SESSION['user_id'])) {
-    header("Location: php/fechas.php"); 
+    header("Location: index.php"); 
     exit;
 }
 
@@ -43,16 +43,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['register'])) {
     }
 }
 
-// Manejo de inicio de sesión
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Verificar si los campos están vacíos
     if (empty($username) || empty($password)) {
         $error_message = "Por favor ingrese todos los campos.";
     } else {
-        // Verificar las credenciales
         $sql = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $username);
@@ -61,12 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            // Verificar la contraseña
             if (password_verify($password, $row['contrasena'])) {
-                // Iniciar sesión
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['username'] = $row['nombre_usuario'];
-                header("Location: php/fechas.php");
+                header("Location: index.php");
                 exit;
             } else {
                 $error_message = "Contraseña incorrecta.";
@@ -101,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
             }
         }
 
-        // Validar disponibilidad del nombre de usuario con AJAX
         function checkUsernameAvailability() {
             const username = document.getElementById("registerUsername").value;
             fetch(`php/check_username.php?username=${username}`)
@@ -120,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
 <h1>Iniciar Sesión o Registrarse</h1>
 
-<!-- Iniciar sesión -->
 <h2>Iniciar Sesión</h2>
 <form method="POST">
     <input type="text" name="username" placeholder="Nombre de usuario" required>
@@ -128,7 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
     <button type="submit" name="login">Iniciar Sesión</button>
 </form>
 
-<!-- Mensajes de error o éxito -->
 <?php if (isset($error_message)): ?>
     <p style="color: red;"><?php echo $error_message; ?></p>
 <?php elseif (isset($success_message)): ?>
@@ -137,7 +129,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
 
 <hr>
 
-<!-- Registro -->
 <h2>Registrarse</h2>
 <form method="POST" oninput="validateRegisterForm()">
     <input type="text" id="registerUsername" name="username" placeholder="Nombre de usuario" required onblur="checkUsernameAvailability()">
